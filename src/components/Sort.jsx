@@ -1,7 +1,15 @@
-import React from 'react';
-import '../scss/app.scss';
+import React, {useState} from 'react';
 
 const Sort = () => {
+  const arrList = ['популярности', 'цене', 'алфавиту']
+  const [popupSort, setPopupSort] = useState(false)
+  const [selectItem, setSelectItem] = useState(0)
+
+  const onClickItem = (i) => {
+    setSelectItem(i)
+    setPopupSort(false)
+  }
+
   return (
     <div className="sort">
       <div className="sort__label">
@@ -18,15 +26,17 @@ const Sort = () => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span>популярности</span>
+        <span onClick={() => setPopupSort(!popupSort)}>{arrList[selectItem]}</span>
       </div>
-      <div className="sort__popup">
-        <ul>
-          <li className="active">популярности</li>
-          <li>цене</li>
-          <li>алфавиту</li>
-        </ul>
-      </div>
+      {popupSort && (
+        <div className="sort__popup">
+          <ul>
+            {arrList.map((item, i) => (
+              <li key={item} onClick={() => onClickItem(i)} className={selectItem === i ? "active" : ""}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

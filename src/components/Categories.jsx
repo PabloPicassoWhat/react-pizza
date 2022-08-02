@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import '../scss/app.scss';
 
 const Categories = () => {
   const [activeIndex, setActiveIndex] = useState(0)
