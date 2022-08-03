@@ -30,13 +30,20 @@
     border-radius: 10px;
     overflow: hidden;
     padding: 10px 0;
-    width: 160px;
+    width: 170px;
 
     ul {
       overflow: hidden;
       li {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
         padding: 12px 20px;
         cursor: pointer;
+        svg {
+          margin-right: 10px;
+        }
 
         &.active,
         &:hover {
