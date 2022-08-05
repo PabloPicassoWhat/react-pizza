@@ -1,6 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
+import {useDispatch} from "react-redux";
 
-const Sort = ({selectItem, setSelectItem, setSortPosition, sortPosition, popupSort, setPopupSort}) => {
+import {setPopupSort, setSelectSortItem, setSortPosition} from "../redux/slices/filterSlice";
+
+const Sort = ({selectItem, sortPosition, popupSort}) => {
+  const dispatch = useDispatch()
+
   const arrList = [
     {name: 'популярности', sortType: 'rating'},
     {name: 'цене', sortType: 'price'},
@@ -8,8 +13,12 @@ const Sort = ({selectItem, setSelectItem, setSortPosition, sortPosition, popupSo
   ]
 
   const onClickItem = (obj) => {
-    setSelectItem(obj)
-    setPopupSort(false)
+    dispatch(setSelectSortItem(obj))
+    dispatch(setPopupSort(false))
+  }
+
+  const sortPositionDispatch = () => {
+    dispatch(setSortPosition(!sortPosition))
   }
 
   return (
@@ -20,7 +29,7 @@ const Sort = ({selectItem, setSelectItem, setSortPosition, sortPosition, popupSo
           : <svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16"><path fillRule="evenodd" d="M12 11L6 5l-6 6h12z"/></svg>
         }
         <b>Сортировка по:</b>
-        <span onClick={() => setPopupSort(!popupSort)}>{selectItem.name}</span>
+        <span onClick={() => dispatch(setPopupSort(!popupSort))}>{selectItem.name}</span>
       </div>
       {popupSort && (
         <div className="sort__popup">
@@ -28,8 +37,8 @@ const Sort = ({selectItem, setSelectItem, setSortPosition, sortPosition, popupSo
             {arrList.map((obj) => (
               <li key={obj.name} onClick={() => onClickItem(obj)} className={selectItem.name === obj.name ? "active" : ""}>
                 {sortPosition
-                  ? <svg onClick={() => setSortPosition(!sortPosition)} xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16"><path fillRule="evenodd" d="M0 5l6 6 6-6H0z"/></svg>
-                  : <svg onClick={() => setSortPosition(!sortPosition)} xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16"><path fillRule="evenodd" d="M12 11L6 5l-6 6h12z"/></svg>
+                  ? <svg onClick={sortPositionDispatch} xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16"><path fillRule="evenodd" d="M0 5l6 6 6-6H0z"/></svg>
+                  : <svg onClick={sortPositionDispatch} xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16"><path fillRule="evenodd" d="M12 11L6 5l-6 6h12z"/></svg>
                 } {obj.name}
               </li>
             ))}
