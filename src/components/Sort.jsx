@@ -32,7 +32,7 @@ const Sort = ({selectItem, sortPosition, popupSort}) => {
         <span onClick={() => dispatch(setPopupSort(!popupSort))}>{selectItem.name}</span>
       </div>
       {popupSort && (
-        <div className="sort__popup">
+        <div onPointerLeave={() => dispatch(setPopupSort(false))} className="sort__popup">
           <ul>
             {arrList.map((obj) => (
               <li key={obj.name} onClick={() => onClickItem(obj)} className={selectItem.name === obj.name ? "active" : ""}>

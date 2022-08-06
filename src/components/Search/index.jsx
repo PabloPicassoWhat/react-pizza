@@ -1,10 +1,33 @@
-import React, {useContext} from 'react';
+import React, {useCallback, useContext, useRef, useState} from 'react';
 import {SearchContext} from "../../App";
+import debounce from "lodash.debounce";
 
 import styles from "./Search.module.scss"
 
 const Search = () => {
-  const {searchValue, setSearchValue} = useContext(SearchContext)
+  const [inputValue, setInputValue] = useState('')
+  const {setSearchValue} = useContext(SearchContext)
+  const inputRef = useRef()
+
+  const clearInput = () => {
+    setInputValue('')
+    setSearchValue('')
+    setTimeout(() => {
+      inputRef.current.focus()
+    }, 10)
+  }
+
+  const updateInputValue = useCallback(
+    debounce((str) => {
+      setSearchValue(str)
+    }, 700),
+    []
+  )
+
+  const onChangeInput = (e) => {
+    setInputValue(e.target.value)
+    updateInputValue(e.target.value)
+  }
 
   return (
     <div className={styles.root}>
@@ -20,14 +43,15 @@ const Search = () => {
           <circle cx="22" cy="13" fill="#263238" r="0.5"/></g>
       </svg>
       <input
-        onChange={(e) => setSearchValue(e.target.value)}
-        value={searchValue}
+        ref={inputRef}
+        onChange={onChangeInput}
+        value={inputValue}
         className={styles.input}
         type="text"
         placeholder="Поиск..."
       />
-      {searchValue &&
-        <svg onMouseDownCapture={() => setSearchValue('')} className={styles.closeIcon} enableBackground="new 0 0 32 32" height="32px" id="Layer_1" version="1.1" viewBox="0 0 32 32" width="32px" xmlns="http://www.w3.org/2000/svg" >
+      {inputValue &&
+        <svg onMouseDownCapture={clearInput} className={styles.closeIcon} enableBackground="new 0 0 32 32" height="32px" id="Layer_1" version="1.1" viewBox="0 0 32 32" width="32px" xmlns="http://www.w3.org/2000/svg" >
           <g><polyline fill="none" points="   649,137.999 675,137.999 675,155.999 661,155.999  " stroke="#FFFFFF" strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="2"/>
           <polyline fill="none" points="   653,155.999 649,155.999 649,141.999  " stroke="#FFFFFF" strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="2"/>
           <polyline fill="none" points="   661,156 653,162 653,156  " stroke="#FFFFFF" strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="2"/></g>
