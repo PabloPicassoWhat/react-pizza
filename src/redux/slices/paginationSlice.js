@@ -10,9 +10,12 @@ export const paginationSlice = createSlice({
   reducers: {
     setCurrentPage: (state, action) => {
       state.currentPage = action.payload
+    },
+    setPage: (state, action) => {
+      state.currentPage = Number(action.payload.currentPage)
     }
   }
 })
 
-export const {setCurrentPage} = paginationSlice.actions
+export const {setCurrentPage, setPage} = paginationSlice.actions
 export default paginationSlice.reducer

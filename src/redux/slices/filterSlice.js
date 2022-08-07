@@ -22,9 +22,13 @@ export const filterSlice = createSlice({
     },
     setPopupSort: (state, action) => {
       state.popupSort = action.payload
+    },
+    setFilters: (state, action) => {
+      state.categoryId = Number(action.payload.categoryId)
+      state.selectSortItem = action.payload.sort
     }
   }
 })
 
-export const { setActiveCategory, setSelectSortItem, setSortPosition, setPopupSort } = filterSlice.actions
+export const { setActiveCategory, setSelectSortItem, setSortPosition, setPopupSort, setFilters } = filterSlice.actions
 export default filterSlice.reducer

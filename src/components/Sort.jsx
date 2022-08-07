@@ -3,14 +3,14 @@ import {useDispatch} from "react-redux";
 
 import {setPopupSort, setSelectSortItem, setSortPosition} from "../redux/slices/filterSlice";
 
+export const arrList = [
+  {name: 'популярности', sortType: 'rating'},
+  {name: 'цене', sortType: 'price'},
+  {name: 'алфавиту', sortType: 'title'}
+]
+
 const Sort = ({selectItem, sortPosition, popupSort}) => {
   const dispatch = useDispatch()
-
-  const arrList = [
-    {name: 'популярности', sortType: 'rating'},
-    {name: 'цене', sortType: 'price'},
-    {name: 'алфавиту', sortType: 'title'}
-  ]
 
   const onClickItem = (obj) => {
     dispatch(setSelectSortItem(obj))
