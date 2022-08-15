@@ -6,14 +6,14 @@ import logoSvg from '../assets/img/pizza-logo.svg'
 import Search from "./Search";
 
 const Header = () => {
-  const {items, totalPrice} = useSelector(state => state.cart)
-  const totalCount = items.reduce((sum, item) => sum + item.count, 0)
+  const {items, totalPrice} = useSelector((state: any) => state.cart)
+  const totalCount = items.reduce((sum: number, item: any) => sum + item.count, 0)
   const {pathname} = useLocation()
 
   return (
     <div className="header">
       <div className="container">
-        <Link to="/" onClick={() => window.location.refresh()}>
+        <Link to="/" onClick={() => window.location.replace("/")}>
           <div className="header__logo">
             <img width="38" src={logoSvg} alt="Pizza logo"/>
             <div>

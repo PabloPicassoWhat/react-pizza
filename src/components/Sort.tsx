@@ -1,18 +1,25 @@
 import React from 'react';
 import {useDispatch} from "react-redux";
 
-import {setPopupSort, setSelectSortItem, setSortPosition} from "../redux/slices/filterSlice";
+import {setPopupSort, setSelectSortItem, setSortPosition, SortItem} from "../redux/slices/filterSlice";
 
-export const arrList = [
+
+type SortProps = {
+  selectItem: SortItem
+  sortPosition: boolean
+  popupSort: boolean
+}
+
+export const arrList: SortItem[] = [
   {name: 'популярности', sortType: 'rating'},
   {name: 'цене', sortType: 'price'},
   {name: 'алфавиту', sortType: 'title'}
 ]
 
-const Sort = ({selectItem, sortPosition, popupSort}) => {
+const Sort: React.FC<SortProps> = ({selectItem, sortPosition, popupSort}) => {
   const dispatch = useDispatch()
 
-  const onClickItem = (obj) => {
+  const onClickItem = (obj: SortItem) => {
     dispatch(setSelectSortItem(obj))
     dispatch(setPopupSort(false))
   }

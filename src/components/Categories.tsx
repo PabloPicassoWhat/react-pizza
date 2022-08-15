@@ -3,9 +3,14 @@ import {useDispatch} from "react-redux";
 
 import {setActiveCategory} from "../redux/slices/filterSlice";
 
-const Categories = ({valueCategory}) => {
+type CategoriesProps = {
+    valueCategory: number
+}
+
+const category = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые']
+
+const Categories: React.FC<CategoriesProps> = ({valueCategory}) => {
   const dispatch = useDispatch()
-  const category = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые']
 
   return (
     <div className="categories">

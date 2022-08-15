@@ -1,25 +1,37 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 
-import {addItem} from "../../redux/slices/cartSlice";
+import {addItem, CartItem} from "../../redux/slices/cartSlice";
+import {selectCartItemById} from "../../redux/slices/cartSlice"
 
-const PizzaBlock = ({id, title, price, imageUrl, sizes, types}) => {
-  const [activeSize, setActiveSize] = useState(0)
-  const [activeType, setActiveType] = useState(0)
+type PizzaBlockProps = {
+  id: number
+  title: string
+  price: number
+  imageUrl: string
+  sizes: number[]
+  types: number[]
+  rating: number
+}
+
+const PizzaBlock: React.FC<PizzaBlockProps> = ({id, title, price, imageUrl, sizes, types}) => {
+  const [activeSize, setActiveSize] = useState<number>(0)
+  const [activeType, setActiveType] = useState<number>(0)
   const typeNames = ['тонкое', 'традиционное']
 
   const dispatch = useDispatch()
-  const cartItem = useSelector((state) => state.cart.items.find((obj) => obj.id === id))
+  const cartItem = useSelector(selectCartItemById(id))
   const addedCount = cartItem ? cartItem.count : 0
 
   const onClickAdd = () => {
-    const item = {
+    const item: CartItem = {
       id,
       title,
       price,
       imageUrl,
       type: typeNames[activeType],
-      size: sizes[activeSize]
+      size: sizes[activeSize],
+      count: 0
     }
     dispatch(addItem(item))
   }

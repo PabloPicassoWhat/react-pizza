@@ -6,7 +6,11 @@ import {setCurrentPage} from "../../redux/slices/paginationSlice";
 
 import styles from "./Pagination.module.scss"
 
-const Pagination = ({currentPage}) => {
+type PaginationProps = {
+  currentPage: number
+}
+
+const Pagination: React.FC<PaginationProps> = ({currentPage}) => {
   const dispatch = useDispatch()
 
   return (
@@ -19,7 +23,6 @@ const Pagination = ({currentPage}) => {
       pageCount={2}
       forcePage={currentPage - 1}
       previousLabel="<<"
-      renderOnZeroPageCount={null}
     />
   );
 };
