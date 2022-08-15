@@ -266,6 +266,27 @@ body {
             display: none;
           }
         }
+
+        &--disabled {
+          opacity: 0.3;
+          border-color: #b6b6b6;
+
+          &:active {
+            transform: none;
+          }
+
+          &:hover {
+            background-color: transparent;
+
+            svg path{
+              fill: #b6b6b6;
+            }
+          }
+        }
+
+        svg path{
+          fill: #b6b6b6;
+        }
       }
 
       b {
