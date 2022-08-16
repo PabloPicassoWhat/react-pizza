@@ -38,7 +38,7 @@ type PizzaParams = {
 export const fetchPizzas = createAsyncThunk<Pizza[], PizzaParams>('pizza/fetchPizzasStatus', async (params) => {
   const {category, sortBy, order, search, currentPage} = params
   const {data} = await axios.get<Pizza[]>(
-      `https://62e8ff67249bb1284eb82257.mockapi.io/items?page=${currentPage}&limit=8&${category}&sortBy=${sortBy}&order=${order}${search}`
+    `https://62e8ff67249bb1284eb82257.mockapi.io/items?page=${currentPage}&limit=8&${category}&sortBy=${sortBy}&order=${order}${search}`
   )
   return data
 })
@@ -51,15 +51,15 @@ const pizzaSlice = createSlice({
       state.items = action.payload
     }
   },
-  extraReducers: builder => {
-    builder.addCase(fetchPizzas.pending, (state) => {
+  extraReducers: (builder) => {
+    builder.addCase(fetchPizzas.pending, (state, action) => {
       state.status = Status.LOADING
       state.items = []
-    }),
+    })
     builder.addCase(fetchPizzas.fulfilled, (state, action) => {
       state.status = Status.SUCCESS
       state.items = action.payload
-    }),
+    })
     builder.addCase(fetchPizzas.rejected, (state, action) => {
       state.status = Status.ERROR
       state.items = []
