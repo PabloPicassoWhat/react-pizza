@@ -1,14 +1,13 @@
-import {calcTotalPrice} from "./calcTotalPrice";
 import {CartItem} from "../redux/slices/cartSlice";
+import {ERROR_LS} from "../constant";
 
-export const getCartFromLS = () => {
-    const data = localStorage.getItem('cart')
-    const items = data ? JSON.parse(data) : []
-    const totalPrice = calcTotalPrice(items)
+export const getItemsLS = () => localStorage.getItem('cart')
 
-
-    return {
-        items: items as CartItem[],
-        totalPrice
-    }
+export const getCartFromLS = (data: any): CartItem[] => {
+  try {
+    return data ? JSON.parse(data) : []
+  } catch (e: any) {
+    console.log(e.message)
+    return ERROR_LS
+  }
 }
