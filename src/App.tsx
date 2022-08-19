@@ -1,6 +1,7 @@
 import React from "react";
 import {Routes, Route} from "react-router-dom";
 
+import 'antd/dist/antd.css';
 import './scss/app.scss';
 
 import Header from "./components/Header";
@@ -9,7 +10,6 @@ import NotFound from "./pages/NotFound";
 import Cart from "./pages/Cart";
 
 const App = () => {
-
   return (
     <div className="wrapper">
       <Header/>

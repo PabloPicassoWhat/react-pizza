@@ -1,26 +1,32 @@
-import React from 'react';
-import {useDispatch} from "react-redux";
+import React, {FC, memo, useCallback} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import {setActiveCategory} from "../redux/filter/slice"
 
-import {setActiveCategory} from "../redux/slices/filterSlice";
-
-type CategoriesProps = {
-    valueCategory: number
-}
+import {CategoriesProps} from "./types";
 
 const category = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые']
 
-const Categories: React.FC<CategoriesProps> = ({valueCategory}) => {
+const Categories: FC<CategoriesProps> = ({valueCategory}) => {
   const dispatch = useDispatch()
+
+  // const onClickActiveCategory = (e: any): any => {
+  //   dispatch(setActiveCategory(1))
+  //   console.log(e)
+  // }
+
+  // () => dispatch(setActiveCategory(index))
+
+  // className={categoryId === index ? "active" : ""}
 
   return (
     <div className="categories">
-      <ul>
+      <div>
         {category.map((item, index) => (
-            <li key={index} onClick={() => dispatch(setActiveCategory(index))} className={valueCategory === index ? "active" : ""}>{item}</li>
+            <div key={index} onClick={() => dispatch(setActiveCategory(index))} className={valueCategory === index ? "active" : ""} >{item}</div>
           ))}
-      </ul>
+      </div>
     </div>
   );
 };
 
-export default Categories;
+export default memo(Categories);

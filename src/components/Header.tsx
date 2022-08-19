@@ -1,33 +1,49 @@
-import React, {useEffect, useRef} from 'react';
-import {Link, useLocation} from "react-router-dom";
-import {useSelector} from "react-redux";
+import React, {FC, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Link, useLocation, useParams} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
 
+import { Typography } from 'antd';
+
+import {setFilterDefault} from "../redux/filter/slice"
 import logoSvg from '../assets/img/pizza-logo.svg'
 import Search from "./Search";
+import {selectCart} from "../redux/cart/selectors";
+import {setCartFromLS} from "../utils/setCartFromLS";
+import {setIsMount} from "../redux/mount/slice"
 
-const Header = () => {
-  const {items, totalPrice} = useSelector((state: any) => state.cart)
-  const totalCount = items.reduce((sum: number, item: any) => sum + item.count, 0)
+const Header: FC = () => {
+  // const isMounted = useRef(false)
+  const dispatch = useDispatch()
   const {pathname} = useLocation()
-  const isMounted = useRef(false)
+  const [isMount] = useState(true)
+  const {items, totalPrice} = useSelector(selectCart)
 
   useEffect(() => {
-    if (isMounted.current) {
-      const json = JSON.stringify(items)
-      localStorage.setItem('cart', json)
-    }
-    isMounted.current = true
+    isMount && setCartFromLS(items)
   }, [items])
+
+  const totalCount = useMemo(() => items.reduce((sum: number, item: any) => sum + item.count, 0), [items])
+
+  const setDefaultHomePage = useCallback(() => {
+    dispatch(setFilterDefault())
+    dispatch(setIsMount(false))
+  }, [dispatch])
+
+  // useEffect(() => {
+  //   isMounted.current && setCartFromLS(items)
+  //   isMounted.current = true
+  // }, [items])
+
 
   return (
     <div className="header">
       <div className="container">
-        <Link to="/" onClick={() => window.location.replace("/")}>
+        <Link to="/" onClick={setDefaultHomePage}>
           <div className="header__logo">
             <img width="38" src={logoSvg} alt="Pizza logo"/>
             <div>
-              <h1>React Pizza</h1>
-              <p>самая вкусная пицца во вселенной</p>
+              <Typography.Title>React Pizza</Typography.Title>
+              <Typography.Text>самая вкусная пицца во вселенной</Typography.Text>
             </div>
           </div>
         </Link>

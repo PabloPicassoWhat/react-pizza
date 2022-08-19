@@ -1,18 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {FilterType} from "../../pages/Home";
 
-export type SortItem = {
-  name: string
-  sortType: 'rating' | 'price' | 'title'
-}
-
-export interface FilterSliceState {
-  categoryId: number
-  searchValue: string
-  selectSortItem: SortItem
-  sortPosition: boolean
-  popupSort: boolean
-}
+import {FilterSliceState, SortItem} from "./types";
+import {FilterType} from "../../pages/types";
 
 const initialState: FilterSliceState = {
   categoryId: 0,
@@ -32,21 +21,31 @@ export const filterSlice = createSlice({
     setSearchValue: (state, action: PayloadAction<string>) => {
       state.searchValue = action.payload
     },
-    setSelectSortItem: (state, action: PayloadAction<SortItem> ) => {
+    setSelectSortItem: (state, action: PayloadAction<SortItem>) => {
       state.selectSortItem = action.payload
     },
-    setSortPosition: (state, action: PayloadAction<boolean> ) => {
+    setSortPosition: (state, action: PayloadAction<boolean>) => {
       state.sortPosition = action.payload
     },
     setPopupSort: (state, action: PayloadAction<boolean>) => {
       state.popupSort = action.payload
     },
     setFilters: (state, action: PayloadAction<FilterType>) => {
-      state.categoryId = Number(action.payload.categoryId)
+      // state.categoryId = Number(action.payload.categoryId)
       state.selectSortItem = action.payload.selectSortItem
-    }
+    },
+    setFilterDefault: (state) => initialState
   }
 })
 
-export const { setActiveCategory, setSelectSortItem, setSortPosition, setPopupSort, setFilters, setSearchValue } = filterSlice.actions
+export const {
+  setActiveCategory,
+  setSelectSortItem,
+  setSortPosition,
+  setPopupSort,
+  setFilters,
+  setSearchValue,
+  setFilterDefault
+} = filterSlice.actions
+
 export default filterSlice.reducer

@@ -1,35 +1,71 @@
-import React, {useEffect, useRef} from 'react';
-import {useSelector} from "react-redux";
-import qs from "qs";
+import React, {FC, memo, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {setFilters, SortItem} from "../redux/slices/filterSlice";
-import {setPage} from "../redux/slices/paginationSlice";
-import {fetchPizzas} from "../redux/slices/pizzaSlice";
+import {always, find, ifElse, prop, propEq} from "ramda"
+import qs from "qs";
 
-import {Categories, Sort, PizzaSkeleton, PizzaBlock, Pagination} from "../components";
-import { arrList } from "../components/Sort"
-import {RootState, useAppDispatch} from "../redux/store";
+import {AppDispatch, RootState} from "../redux/store";
+import {setFilters} from "../redux/filter/slice";
+import {setPage} from "../redux/pagination/slice";
+import {fetchPizzas} from "../redux/pizza/slice";
+import {selectFilter} from "../redux/filter/selectors";
+import {selectPagination} from "../redux/pagination/selectors";
+import {selectPizza} from "../redux/pizza/selectors";
+import {SortItem} from "../redux/filter/types";
+import {IContent} from "./types";
+import {setIsMount} from "../redux/mount/slice"
 
-export type FilterType = {
-  categoryId: string
-  currentPage: string
-  sortType: string
-  selectSortItem: SortItem
-}
+import {Categories, Pagination, PizzaBlock, PizzaSkeleton, Sort} from "../components";
+import {arrList} from "../components/Sort"
+import {FAKE_ARR} from "../constant";
+import {log} from "util";
 
-const Home: React.FC = () => {
-  const isSearch = useRef(false)
-  const isMounted = useRef(false)
+// const renderMainContent = ifElse<IContent[], ReactNode, ReactNode>(
+//   propEq("status", 'loading'),
+//   prop("skeleton"),
+//   prop("pizzaElement")
+// )
+
+// const render = ifElse<IContent[], ReactNode, ReactNode>(
+//   ({status}) => equals(status, "loading"),
+//   ({skeleton}) => skeleton,
+//   ({pizzaElement}) => pizzaElement
+// )
+
+const renderContent = ifElse<IContent[], ReactNode, ReactNode>(
+  propEq("status", "error"),
+    always(
+      <div className="content__error-info">
+        <h2>Произошла ошибка при загрузке страницы 😕</h2>
+        <p>Попробуйте повторить попытку позже.</p>
+      </div>),
+  ({items, currentPage, status}) => (
+    <>
+      <div className="content__items">
+        {/*{renderMainContent({skeleton, pizzaElement, status})}*/}
+        {items.map((item) => <PizzaBlock key={item.id} {...item}/>)}
+      </div>
+      <Pagination currentPage={currentPage}/>
+    </>
+  )
+)
+
+const Home: FC = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  // const [isMount, setIsMount] = useState(false)
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
+  const isSearch = useRef(false)
+  // const isMounted = useRef(false)
 
-  const {currentPage} = useSelector((state: RootState) => state.pagination)
-  const {items, status} = useSelector((state: RootState) => state.pizza)
-  const {categoryId, sortPosition, popupSort, selectSortItem, searchValue} = useSelector((state: RootState) => state.filter)
+  const isMount = useSelector((state: RootState) => state.mount)
+  const {currentPage} = useSelector(selectPagination)
+  const {items, status} = useSelector(selectPizza)
+  const { sortPosition, categoryId, popupSort, selectSortItem, searchValue} =
+    useSelector(selectFilter)
 
-  const getPizzas = () => {
+  const getPizzas = useCallback(() => {
     const category = !categoryId ? "" : `category=${categoryId}`
-    const sortBy = selectSortItem.sortType
+    const sortBy = selectSortItem?.sortType
     const order = !sortPosition ? 'asc' : 'desc'
     const search = searchValue ? `&search=${searchValue}` : ''
 
@@ -42,51 +78,44 @@ const Home: React.FC = () => {
         currentPage
       })
     )
-  }
+  }, [categoryId, sortPosition, selectSortItem, searchValue, currentPage, dispatch])
 
   // if the parameters were changed and there was a first render
   useEffect(() => {
-    if (isMounted.current) {
+    if (isMount) {
       const queryString = qs.stringify({
-        sortType: selectSortItem.sortType,
+        sortType: selectSortItem?.sortType,
         categoryId,
         currentPage,
       })
-      navigate(`?${queryString}`)
+      // navigate(`?${queryString}`)
     }
-    isMounted.current = true
-  }, [categoryId, selectSortItem, currentPage])
+    dispatch(setIsMount(true))
+  }, [categoryId, selectSortItem, currentPage, navigate])
 
   // if there was a first render, then the parameters of the URL are sewn into the redux
   useEffect(() => {
     if (window.location.search) {
       const params = qs.parse(window.location.search.substring(1))
-      const selectSortItem = arrList.find(obj => obj.sortType === params.sortType) as SortItem
+      // const selectSortItem = arrList?.find(propEq("sortType", params.sortType))
+      const selectSortItem = find<SortItem>(propEq("sortType", params.sortType))(arrList)
 
-      dispatch(
-        setFilters({
-        ...params, selectSortItem
-          } as FilterType)
-      )
-      dispatch(setPage({
-        ...params
-        })
-      )
+      dispatch(setFilters({...params, selectSortItem}))
+      dispatch(setPage({...params}))
       isSearch.current = true
     }
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     window.scrollTo(0, 0)
 
-    if (!isSearch.current) {
-      getPizzas()
-    }
-    isSearch.current = false
-  }, [categoryId, selectSortItem, searchValue, currentPage, sortPosition])
+    if (!isSearch.current) getPizzas()
 
-  const skeleton = [...new Array(8)].map((_, i) => <PizzaSkeleton key={i}/>)
-  const pizzaElement = items.map((item: any) => <PizzaBlock key={item.id} {...item}/>)
+    isSearch.current = false
+  }, [getPizzas])
+
+  // const skeleton = useMemo(() => FAKE_ARR.map((_, i) => <PizzaSkeleton key={i}/>), [])
+  // const pizzaElement = useMemo( () => items.map((item) => <PizzaBlock key={item.id} {...item}/>), [items])
 
   return (
     <div className="container">
@@ -99,27 +128,10 @@ const Home: React.FC = () => {
         />
       </div>
       <h2 className="content__title">Все пиццы</h2>
-      {status === 'error'
-        ? (
-          <div className="content__error-info">
-            <h2>Произошла ошибка при загрузке страницы 😕</h2>
-            <p>Попробуйте повторить попытку позже.</p>
-          </div>
-        )
-        : (
-          <>
-            <div className="content__items">
-              {status === 'loading'
-                ? skeleton
-                : pizzaElement
-              }
-            </div>
-            <Pagination currentPage={currentPage}/>
-          </>
-        )
-      }
+      {/*{renderContent({status, skeleton, pizzaElement, currentPage})}*/}
+      {renderContent({items, status, currentPage})}
     </div>
   );
 };
 
-export default Home;
+export default memo(Home);

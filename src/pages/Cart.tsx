@@ -1,27 +1,25 @@
-import React from 'react';
+import React, {FC, useCallback, useMemo} from 'react';
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 
-import {clearItems, selectCart} from "../redux/slices/cartSlice";
+import {clearItems} from "../redux/cart/slice";
+import {selectCart} from "../redux/cart/selectors";
+import {CartItem} from "../redux/cart/types";
 
 import CartItemBlock from "../components/CartItemBlock";
 import CartEmpty from "../components/CartEmpty";
-import {CartItem} from "../redux/slices/cartSlice"
 
-const Cart: React.FC = () => {
+const Cart: FC = () => {
   const dispatch = useDispatch()
   const {items, totalPrice} = useSelector(selectCart)
-  const totalCount = items.reduce((sum: number, item: CartItem) => sum + item.count, 0)
 
-  const onClearCart = () => {
-    if (window.confirm('Вы действительно хотите очистить корзину?')) {
-      dispatch(clearItems())
-    }
-  }
+  const totalCount = useMemo(() => items.reduce((sum: number, item: CartItem) => sum + item.count, 0), [items])
 
-  if (!totalPrice) {
-    return <CartEmpty/>
-  }
+  const onClearCart = useCallback(() => {
+    if (window.confirm('Вы действительно хотите очистить корзину?')) dispatch(clearItems())
+  }, [dispatch])
+
+  if (!totalPrice) return <CartEmpty/>
 
   return (
     <div className="container container--cart">

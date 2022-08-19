@@ -1,5 +1,5 @@
-import {CartItem} from "../redux/slices/cartSlice";
 import {ERROR_LS} from "../constant";
+import {CartItem} from "../redux/cart/types";
 
 export const getItemsLS = () => localStorage.getItem('cart')
 

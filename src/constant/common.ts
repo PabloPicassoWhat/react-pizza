@@ -7,3 +7,5 @@ export const ERROR_LS = [{
   "size": 40,
   "count": 2
 }]
+
+export const FAKE_ARR = [...new Array(8)]
