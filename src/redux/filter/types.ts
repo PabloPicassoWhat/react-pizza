@@ -5,6 +5,7 @@ export type SortItem = {
 
 export interface FilterSliceState {
   categoryId: number
+  categoryName: string
   searchValue: string
   selectSortItem?: SortItem
   sortPosition: boolean

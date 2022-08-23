@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useMemo} from 'react';
+import React, {FC, useCallback, useMemo, useState} from 'react';
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 
@@ -8,21 +8,24 @@ import {CartItem} from "../redux/cart/types";
 
 import CartItemBlock from "../components/CartItemBlock";
 import CartEmpty from "../components/CartEmpty";
+import DialogAlert from "../components/Dialog";
 
 const Cart: FC = () => {
+  const [isOpen, setIsOpen] = useState(false)
   const dispatch = useDispatch()
   const {items, totalPrice} = useSelector(selectCart)
 
-  const totalCount = useMemo(() => items.reduce((sum: number, item: CartItem) => sum + item.count, 0), [items])
+  const totalCount = useMemo(() => items.reduce((sum: number, item: CartItem) => sum + Number(item.count), 0), [items])
 
-  const onClearCart = useCallback(() => {
-    if (window.confirm('Вы действительно хотите очистить корзину?')) dispatch(clearItems())
-  }, [dispatch])
+  const onClickClearCart = useCallback(() => setIsOpen(true), [dispatch])
+
+  const clearCart = useCallback(() => dispatch(clearItems()), [dispatch])
 
   if (!totalPrice) return <CartEmpty/>
 
   return (
     <div className="container container--cart">
+      <DialogAlert isOpen={isOpen} setIsOpen={setIsOpen} dialogTitle='Очистить корзину?' dialogDescription='Вы действительно хотите очистить корзину?' clear={clearCart}/>
       <div className="cart">
         <div className="cart__top">
           <h2 className="content__title">
@@ -52,7 +55,7 @@ const Cart: FC = () => {
                     strokeLinejoin="round"></path>
             </svg>
 
-            <span onClick={onClearCart}>Очистить корзину</span>
+            <span onClick={onClickClearCart}>Очистить корзину</span>
           </div>
         </div>
         <div className="content__items">

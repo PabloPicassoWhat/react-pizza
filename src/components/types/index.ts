@@ -5,7 +5,3 @@ export type SortProps = {
   sortPosition: boolean
   popupSort: boolean
 }
-
-export type CategoriesProps = {
-  valueCategory: number
-}

@@ -11,7 +11,8 @@ export type Pizza = {
 export enum Status {
   LOADING = 'loading',
   SUCCESS = 'success',
-  ERROR = 'error'
+  ERROR = 'error',
+  EMPTY = 'empty'
 }
 
 export interface PizzaSliceState {

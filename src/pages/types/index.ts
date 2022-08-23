@@ -1,5 +1,5 @@
 import {SortItem} from "../../redux/filter/types";
-import {ReactNode} from "react";
+import {Pizza} from "../../redux/pizza/types";
 
 export type FilterType = {
   categoryId?: string
@@ -9,9 +9,7 @@ export type FilterType = {
 }
 
 export interface IContent {
-  items: any[]
-  // skeleton: ReactNode
-  // pizzaElement: ReactNode
+  items: Pizza[]
   currentPage?: number
   status: string
 }

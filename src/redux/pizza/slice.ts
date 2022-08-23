@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
 import {Pizza, PizzaParams, PizzaSliceState, Status} from "./types";
+import {isEmpty} from "ramda";
 
 const initialState: PizzaSliceState = {
   items: [],
@@ -29,8 +30,13 @@ const pizzaSlice = createSlice({
       state.items = []
     })
     builder.addCase(fetchPizzas.fulfilled, (state, action) => {
-      state.status = Status.SUCCESS
-      state.items = action.payload
+      if (isEmpty(action.payload)) {
+        state.status = Status.EMPTY
+        state.items = action.payload
+      } else {
+        state.status = Status.SUCCESS
+        state.items = action.payload
+      }
     })
     builder.addCase(fetchPizzas.rejected, (state) => {
       state.status = Status.ERROR

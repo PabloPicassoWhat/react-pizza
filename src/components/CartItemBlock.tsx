@@ -1,39 +1,45 @@
-import React from 'react';
-import {useDispatch} from "react-redux";
+import React, {useCallback, useState} from 'react';
+import {useDispatch, } from "react-redux";
 import clsx from "clsx";
 
 import {addItem, minusItem, removeItem} from "../redux/cart/slice";
-import {CartItem} from "../redux/cart/types";
+import DialogAlert from "./Dialog";
 
-type CartItemProps = {
+interface ICartItemProps {
     id: number
-    title: string
-    price: number
-    size: number
-    count: number
-    type: string
-    imageUrl: string
+    title?: string
+    price?: number
+    size?: number
+    count?: number
+    type?: string
+    imageUrl?: string
 }
 
-const CartItemBlock: React.FC<CartItemProps> = ({id, title, price, size,  count, imageUrl, type}) => {
+const CartItemBlock: React.FC<ICartItemProps> = (
+  {
+    id,
+    title,
+    price = 0,
+    size,
+    count = 0,
+    imageUrl,
+    type
+  }
+  ) => {
+  const [isOpen, setIsOpen] = useState(false)
   const dispatch = useDispatch()
 
-  const onClickPlus = () => {
-    dispatch(addItem({id} as CartItem))
-  }
+  const onClickPlus = useCallback(() => dispatch(addItem({id})), [dispatch])
 
-  const onClickMinus = () => {
-    dispatch(minusItem(id))
-  }
+  const onClickMinus = useCallback(() => dispatch(minusItem(id)), [dispatch])
 
-  const onClickRemove = () => {
-    if (window.confirm('Вы действительно хотите удалить товар?')) {
-      dispatch(removeItem(id))
-    }
-  }
+  const onClickRemove = useCallback(() => setIsOpen(true), [dispatch])
+
+  const removeItemBlock = useCallback(() => dispatch(removeItem(id)), [dispatch])
 
   return (
     <div className="cart__item">
+      <DialogAlert isOpen={isOpen} setIsOpen={setIsOpen} dialogTitle='Удалить товар?' dialogDescription='Вы действительно хотите удалить товар?' clear={removeItemBlock}/>
       <div className="cart__item-img">
         <img className="pizza-block__image" src={imageUrl} alt="Pizza"/>
       </div>

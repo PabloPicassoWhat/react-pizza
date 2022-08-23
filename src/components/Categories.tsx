@@ -1,31 +1,29 @@
-import React, {FC, memo, useCallback} from 'react';
-import {useDispatch, useSelector} from "react-redux";
+import React, {FC, memo, useCallback, useState} from 'react';
+import {useDispatch} from "react-redux";
 import {setActiveCategory} from "../redux/filter/slice"
 
-import {CategoriesProps} from "./types";
+import {Segmented} from "antd";
+import {equals} from "ramda";
 
-const category = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые']
+const category = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые', 'Классика']
 
-const Categories: FC<CategoriesProps> = ({valueCategory}) => {
+const Categories: FC = () => {
+  const [value, setValue] = useState<string>("Все")
   const dispatch = useDispatch()
 
-  // const onClickActiveCategory = (e: any): any => {
-  //   dispatch(setActiveCategory(1))
-  //   console.log(e)
-  // }
-
-  // () => dispatch(setActiveCategory(index))
-
-  // className={categoryId === index ? "active" : ""}
+  const onClickActiveCategory = useCallback((e: any) => {
+    setValue(e)
+    const filterCategory = category.findIndex(equals(e))
+    dispatch(setActiveCategory({categoryId: filterCategory, categoryName: e}))
+  }, [dispatch, value])
 
   return (
-    <div className="categories">
-      <div>
-        {category.map((item, index) => (
-            <div key={index} onClick={() => dispatch(setActiveCategory(index))} className={valueCategory === index ? "active" : ""} >{item}</div>
-          ))}
-      </div>
-    </div>
+    <Segmented
+      options={category}
+      size="large"
+      value={value}
+      onChange={onClickActiveCategory}
+    />
   );
 };
 

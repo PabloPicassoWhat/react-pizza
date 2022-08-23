@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import debounce from "lodash.debounce";
 import {useDispatch} from "react-redux";
 import {setSearchValue} from "../../redux/filter/slice";
@@ -6,35 +6,42 @@ import {setSearchValue} from "../../redux/filter/slice";
 import {Input} from "antd"
 
 import styles from "./Search.module.scss"
+import {Simulate} from "react-dom/test-utils";
+import {InputBase, TextField} from "@mui/material";
 
 const Search: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('')
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [statusInput, setStatusInput] = useState<boolean>(false)
+  // const inputRef = useRef<HTMLInputElement>(null)
   const dispatch = useDispatch()
 
-  const clearInput = () => {
-    setInputValue('')
-    dispatch(setSearchValue(''))
-    setTimeout(() => {
-      inputRef.current?.focus()
-    }, 10)
-  }
+  // const clearInput = () => {
+  //   setInputValue('')
+  //   dispatch(setSearchValue(''))
+  //   setTimeout(() => {
+  //     inputRef.current?.focus()
+  //   }, 10)
+  // }
 
-  const updateInputValue = useCallback(
-    debounce((str) => {
-      dispatch(setSearchValue(str))
-    }, 700),
-    []
-  )
+  // const updateInputValue = useCallback(
+  //   debounce((str) => {
+  //     dispatch(setSearchValue(str))
+  //   }, 700),
+  //   []
+  // )
 
-  const onChangeInput = (e: any) => {
-    console.log(e)
-    setInputValue(e)
-    updateInputValue(e)
-  }
+  const onChangeInput = useCallback((e: any) => {
+    setInputValue(e.target.value)
+    if (!statusInput) dispatch(setSearchValue(e.target.value))
+  }, [statusInput, inputValue])
+
+  useEffect(() => {
+    if (inputValue !== "") setStatusInput(inputValue.length < 3)
+  }, [inputValue])
 
   return (
-    <Input.Search placeholder="input search text" allowClear onSearch={onChangeInput} enterButton />
+    // <Input.Search status={statusInput ? "error" : ""} placeholder="Поиск..." allowClear onSearch={onChangeInput} enterButton />
+    <TextField error={statusInput} id="outlined-basic" label="Поиск..." variant="outlined" onChange={onChangeInput} />
     // <div className={styles.root}>
     //   <svg className={styles.icon} enableBackground="new 0 0 32 32" height="32px" version="1.1" viewBox="0 0 32 32" width="32px" xmlns="http://www.w3.org/2000/svg">
     //     <g id="search_magnifier_magnifying_glass_loupe">
