@@ -1,9 +1,12 @@
-import React, {FC, memo, useCallback} from 'react';
+import React, {FC, useCallback, useMemo} from 'react';
 import {useDispatch} from "react-redux";
 
-import {setPopupSort, setSelectSortItem, setSortPosition} from "../redux/filter/slice";
+import {setSelectSortItem, setSortPosition} from "../redux/filter/slice";
 import {SortItem} from "../redux/filter/types";
 import {SortProps} from "./types";
+
+import {Dropdown, Menu, Space} from "antd";
+import {CaretDownOutlined, CaretUpOutlined, DownOutlined} from "@ant-design/icons/lib";
 
 export const arrList: SortItem[] = [
   {name: 'популярности', sortType: 'rating'},
@@ -11,56 +14,41 @@ export const arrList: SortItem[] = [
   {name: 'алфавиту', sortType: 'title'}
 ]
 
-const Sort: FC<SortProps> = ({selectItem, sortPosition, popupSort}) => {
+const Sort: FC<SortProps> = ({selectItem, sortPosition}) => {
   const dispatch = useDispatch()
 
   const onClickItem = useCallback((obj: SortItem) => {
     dispatch(setSelectSortItem(obj))
-    dispatch(setPopupSort(false))
-  }, [dispatch])
+  }, [])
 
   const sortPositionDispatch = useCallback(() => {
     dispatch(setSortPosition(!sortPosition))
   }, [dispatch, sortPosition])
 
-  const onClickPopupSort = useCallback(() => {
-    dispatch(setPopupSort(!popupSort))
-  }, [dispatch, popupSort])
+  const triangleSortPosition = useMemo(() => sortPosition
+      ? <CaretDownOutlined onClick={sortPositionDispatch} />
+      : <CaretUpOutlined onClick={sortPositionDispatch} />, [sortPosition])
 
-  const onPointerLeavePopupSort = useCallback(() => {
-    dispatch(setPopupSort(false))
-  }, [dispatch])
+  const newArrList = useMemo(() => arrList.map((obj, idx) => (
+    {...obj, key: idx + 1, label: <span onClick={() => onClickItem(obj)}>{obj.name}</span>, icon: triangleSortPosition}
+    )), [sortPosition])
 
-  const trianglePopup = useCallback(() =>  popupSort
-      ? <svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16"><path fillRule="evenodd" d="M12 11L6 5l-6 6h12z"/></svg>
-      : <svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16"><path fillRule="evenodd" d="M0 5l6 6 6-6H0z"/></svg>
-    , [popupSort])
-
-  const triangleSortPosition = useCallback(() =>  sortPosition
-      ? <svg onClick={sortPositionDispatch} xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16"><path fillRule="evenodd" d="M0 5l6 6 6-6H0z"/></svg>
-      : <svg onClick={sortPositionDispatch} xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16"><path fillRule="evenodd" d="M12 11L6 5l-6 6h12z"/></svg>
-    , [sortPosition, sortPositionDispatch])
+  const menu = <Menu items={newArrList} />
 
   return (
     <div className="sort">
       <div className="sort__label">
-        {trianglePopup()}
-        <b>Сортировка по:</b>
-        <span onClick={onClickPopupSort}>{selectItem?.name}</span>
+        <Dropdown overlay={menu}>
+          <a onClick={e => e.preventDefault()}>
+            <Space>
+              Сортировать по
+              <DownOutlined />
+            </Space>
+          </a>
+        </Dropdown>
       </div>
-      {popupSort && (
-        <div onPointerLeave={onPointerLeavePopupSort} className="sort__popup">
-          <ul>
-            {arrList.map((obj) => (
-              <li key={obj.name} onClick={() => onClickItem(obj)} className={selectItem?.name === obj.name ? "active" : ""}>
-                {triangleSortPosition()} {obj.name}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 };
 
-export default memo(Sort);
+export default Sort;

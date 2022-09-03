@@ -1,39 +1,27 @@
-import React, {FC, ReactNode, useCallback, useEffect, useLayoutEffect, useMemo, useRef} from 'react';
+import React, {FC, ReactNode, useCallback, useEffect, useLayoutEffect, useRef} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {always, find, equals, propEq, cond} from "ramda"
 import qs from "qs";
 
-import {Typography, Tabs, Result} from "antd";
+import {Typography, Result} from "antd";
 
-import {AppDispatch, RootState} from "../redux/store";
+import {AppDispatch} from "../redux/store";
 import {setFilters} from "../redux/filter/slice";
 import {setPage} from "../redux/pagination/slice";
 import {fetchPizzas} from "../redux/pizza/slice";
+import {setIsMount} from "../redux/mount/slice"
 import {selectCategoryName, selectFilter} from "../redux/filter/selectors";
 import {selectPagination} from "../redux/pagination/selectors";
 import {selectPizza} from "../redux/pizza/selectors";
-import {SortItem} from "../redux/filter/types";
-import {IContent} from "./types";
-import {setIsMount} from "../redux/mount/slice"
+import {selectMount} from "../redux/mount/selectors";
 
 import {Categories, Pagination, PizzaBlock, Sort} from "../components";
-import {arrList} from "../components/Sort"
-import TableItems from "../components/Table/TableItems";
-import Loader from "../components/Loader/Loader";
+import {IContent} from "./types";
+import {SortItem} from "../redux/filter/types";
 import {Status} from "../redux/pizza/types";
-
-// const renderMainContent = ifElse<IContent[], ReactNode, ReactNode>(
-//   propEq("status", 'loading'),
-//   prop("skeleton"),
-//   prop("pizzaElement")
-// )
-
-// const render = ifElse<IContent[], ReactNode, ReactNode>(
-//   ({status}) => equals(status, "loading"),
-//   () => <Loader/>,
-//   ({pizzaElement}) => pizzaElement
-// )
+import Loader from "../components/Loader/Loader";
+import {arrList} from "../components/Sort"
 
 const renderContent = cond<IContent[], ReactNode>([
   [propEq("status", Status.ERROR), always(<Result status="warning" title="Произошла ошибка при загрузке страницы"/>)],
@@ -53,11 +41,11 @@ const Home: FC = () => {
   const navigate = useNavigate()
   const isSearch = useRef(false)
 
-  const isMount = useSelector((state: RootState) => state.mount)
+  const isMount = useSelector(selectMount)
   const {currentPage} = useSelector(selectPagination)
   const {items, status} = useSelector(selectPizza)
   const categoryName = useSelector(selectCategoryName)
-  const { sortPosition, categoryId, popupSort, selectSortItem, searchValue} =
+  const { sortPosition, categoryId, selectSortItem, searchValue} =
     useSelector(selectFilter)
 
   const getPizzas = useCallback(() => {
@@ -109,33 +97,17 @@ const Home: FC = () => {
     }
   }, [dispatch])
 
-  const arrTab = useMemo(() => [
-    {
-      tabName: 'Home',
-      key: "1",
-      childComponent: equals(status, Status.LOADING) ? <Loader/> : renderContent({status, currentPage, items})
-    },
-    {
-      tabName: 'Table',
-      key: "2",
-      childComponent: <TableItems/>
-    }
-  ], [status, currentPage, items])
-
   return (
     <div className="container">
       <div className="content__top">
         <Categories />
         <Sort
-          popupSort={popupSort}
           selectItem={selectSortItem}
           sortPosition={sortPosition}
         />
       </div>
       <Typography.Title level={2} className="content__title">{categoryName} пиццы</Typography.Title>
-      <Tabs defaultActiveKey="1">
-        {arrTab.map(item => <Tabs.TabPane key={item.key} tab={item.tabName}>{item.childComponent}</Tabs.TabPane>)}
-      </Tabs>
+      {equals(status, Status.LOADING) ? <Loader/> : renderContent({status, currentPage, items})}
     </div>
   );
 };

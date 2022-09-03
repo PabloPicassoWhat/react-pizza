@@ -1,30 +1,63 @@
 import {ColumnsType} from "antd/es/table";
 import {Pizza} from "../redux/pizza/types";
-import {Image} from "antd";
+import {Dropdown, Image, Menu} from "antd";
 import React from "react";
+import {DownOutlined, EllipsisOutlined, MenuOutlined} from "@ant-design/icons/lib";
+
+const menu = (
+  <Menu
+    items={[
+      {
+        key: '1',
+        label: (
+          <a target="_blank" href="#">
+            просмотреть
+          </a>
+        ),
+      },
+      {
+        key: '2',
+        label: (
+          <a target="_blank"  href="#">
+            редактировать
+          </a>
+        ),
+      },
+    ]}
+  />
+);
 
 export const columns: ColumnsType<Pizza> = [
   {
-    title: 'Title',
+    title: 'Название',
     dataIndex: 'title',
     key: 'title',
     render: text => <a>{text}</a>
   },
   {
-    title: 'Rating',
+    title: 'Рейтинг',
     dataIndex: 'rating',
     key: 'rating'
   },
   {
-    title: 'Price',
+    title: 'Цена',
     dataIndex: 'price',
     key: 'price',
     render: text => `от ${text} ₽`
   },
   {
-    title: 'Image',
+    title: 'Вид',
     dataIndex: 'imageUrl',
     key: 'imageUrl',
     render: img => <Image width={36} src={img}/>
-  }
+  },
+  {
+    title: <MenuOutlined />,
+    dataIndex: 'id',
+    key: 'id',
+    render: img =>
+      <Dropdown overlay={menu} placement="bottom">
+        <EllipsisOutlined />
+      </Dropdown>
+  },
 ]

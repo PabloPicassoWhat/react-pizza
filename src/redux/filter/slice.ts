@@ -9,7 +9,6 @@ const initialState: FilterSliceState = {
   searchValue: '',
   selectSortItem: {name: 'популярности', sortType: 'rating'},
   sortPosition: false,
-  popupSort: false
 }
 
 export const filterSlice = createSlice({
@@ -29,11 +28,7 @@ export const filterSlice = createSlice({
     setSortPosition: (state, action: PayloadAction<boolean>) => {
       state.sortPosition = action.payload
     },
-    setPopupSort: (state, action: PayloadAction<boolean>) => {
-      state.popupSort = action.payload
-    },
     setFilters: (state, action: PayloadAction<FilterType>) => {
-      // state.categoryId = Number(action.payload.categoryId)
       state.selectSortItem = action.payload.selectSortItem
     },
     setFilterDefault: (state) => initialState
@@ -44,7 +39,6 @@ export const {
   setActiveCategory,
   setSelectSortItem,
   setSortPosition,
-  setPopupSort,
   setFilters,
   setSearchValue,
   setFilterDefault

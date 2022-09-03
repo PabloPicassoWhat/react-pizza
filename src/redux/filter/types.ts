@@ -9,5 +9,4 @@ export interface FilterSliceState {
   searchValue: string
   selectSortItem?: SortItem
   sortPosition: boolean
-  popupSort: boolean
 }
