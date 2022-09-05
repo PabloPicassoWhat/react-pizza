@@ -10,7 +10,7 @@ import {allPass, always, equals, lt, gt} from "ramda";
 import {setActiveCategory} from "../../redux/filter/slice";
 
 type PizzaBlockProps = {
-  id: number
+  id: string
   title: string
   price: number
   imageUrl: string

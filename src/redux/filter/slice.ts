@@ -4,7 +4,7 @@ import {FilterSliceState, SortItem} from "./types";
 import {FilterType} from "../../pages/types";
 
 const initialState: FilterSliceState = {
-  categoryId: 0,
+  categoryId: "0",
   categoryName: 'Все',
   searchValue: '',
   selectSortItem: {name: 'популярности', sortType: 'rating'},
@@ -15,7 +15,7 @@ export const filterSlice = createSlice({
   name: 'filter',
   initialState,
   reducers: {
-    setActiveCategory: (state, action: PayloadAction<{categoryId: number, categoryName: string}>) => {
+    setActiveCategory: (state, action: PayloadAction<{categoryId: string, categoryName: string}>) => {
       state.categoryId = action.payload.categoryId
       state.categoryName = action.payload.categoryName
     },

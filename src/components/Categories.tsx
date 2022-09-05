@@ -13,8 +13,8 @@ const Categories: FC = () => {
 
   const onClickActiveCategory = useCallback((e: any) => {
     setValue(e)
-    const filterCategory = category.findIndex(equals(e))
-    dispatch(setActiveCategory({categoryId: filterCategory, categoryName: e}))
+    const filterCategory = `${category.findIndex(equals(e))}`
+    dispatch(setActiveCategory({categoryId: filterCategory.toString(), categoryName: e}))
   }, [dispatch, value])
 
   return (

@@ -1,5 +1,5 @@
 export type Pizza = {
-  id: number
+  id: string
   title: string
   price: number
   imageUrl: string

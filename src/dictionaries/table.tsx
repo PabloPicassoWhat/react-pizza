@@ -3,6 +3,7 @@ import {Pizza} from "../redux/pizza/types";
 import {Dropdown, Image, Menu} from "antd";
 import React from "react";
 import {DownOutlined, EllipsisOutlined, MenuOutlined} from "@ant-design/icons/lib";
+import {Link} from "react-router-dom";
 
 const menu = (
   <Menu
@@ -32,7 +33,7 @@ export const columns: ColumnsType<Pizza> = [
     title: 'Название',
     dataIndex: 'title',
     key: 'title',
-    render: text => <a>{text}</a>
+    render: (text, obj) => <Link to={`/item/${obj.id}`}>{text}</Link>
   },
   {
     title: 'Рейтинг',

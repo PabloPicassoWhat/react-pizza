@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Cart from "./pages/Cart";
+import Item from "./pages/Item";
 
 import {Layout, Menu} from "antd";
 import {ShopOutlined, ProfileOutlined} from "@ant-design/icons/lib";
@@ -47,6 +48,7 @@ const App: FC = () => {
               <Route path="/cart" element={<Cart/>}/>
               <Route path="/*" element={<NotFound/>}/>
               <Route path="/table" element={<TableItems/>}/>
+              <Route path="/item/:id" element={<Item/>}/>
             </Routes>
           </div>
         </Content>

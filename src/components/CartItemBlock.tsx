@@ -6,7 +6,7 @@ import {addItem, minusItem, removeItem} from "../redux/cart/slice";
 import DialogAlert from "./Dialog";
 
 interface ICartItemProps {
-    id: number
+    id: string
     title?: string
     price?: number
     size?: number

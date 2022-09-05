@@ -49,7 +49,7 @@ const Home: FC = () => {
     useSelector(selectFilter)
 
   const getPizzas = useCallback(() => {
-    const category = !categoryId ? "" : `category=${categoryId}`
+    const category = categoryId === "0" ? "" : `category=${categoryId}`
     const sortBy = selectSortItem?.sortType
     const order = !sortPosition ? 'asc' : 'desc'
     const search = searchValue ? `&search=${searchValue}` : ''
